@@ -52,20 +52,13 @@ RUN wget https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-s
     rm rstudio-server-2024.09.2-399-amd64.deb
 RUN useradd -m $RSTUDIO_USER && echo "$RSTUDIO_USER:$RSTUDIO_PASSWORD" | chpasswd
 
-# --- Crear script entrypoint directamente en el contenedor
+# --- Crear script entrypoint ejecutado como devuser pero que lanza rserver con sudo
 RUN echo '#!/bin/bash\n'\
-'echo "[ENTRYPOINT] Lanzando rserver como devuser"\n'\
-'/usr/lib/rstudio-server/bin/rserver --server-user=devuser --server-daemonize=0 &\n'\
+'echo "[ENTRYPOINT] Lanzando rserver como root desde devuser (con sudo)"\n'\
+'sudo /usr/lib/rstudio-server/bin/rserver --server-daemonize=0 &\n'\
 'exec "$@"' > /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
-# RUN echo '#!/bin/bash\n'\
-# 'echo "[ENTRYPOINT] Entrando en entrypoint.sh"\n'\
-# 'which rserver || echo "[ENTRYPOINT] ❌ rserver no encontrado"\n'\
-# 'ls -l /usr/lib/rstudio-server/bin/rserver\n'\
-# '/usr/lib/rstudio-server/bin/rserver --server-daemonize=0 &\n'\
-# 'echo "[ENTRYPOINT] 🎯 RStudio Server lanzado (en background)"\n'\
-# 'exec "$@"' > /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
-# --- Cambiar a devuser
+# --- Usar devuser para que VSCode trabaje cómodamente
 USER $USERNAME
 
 # --- Configuración final
