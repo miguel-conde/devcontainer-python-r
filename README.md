@@ -1,13 +1,12 @@
 # 🐳 Python + R + Quarto Dev Container
 
-Entorno de desarrollo basado en Docker para proyectos de ciencia de datos, machine learning e IA, con soporte completo para Python, R, Quarto y RStudio Server.
+Entorno de desarrollo basado en Docker para proyectos de ciencia de datos, machine learning e IA, con soporte completo para Python, R, Quarto y CmdStanR.
 
 ## ✅ Características
 
 - Ubuntu 24.04
 - Python 3.12 con `venv`, `pipenv`, `poetry`
 - R (última versión) + soporte para `renv`
-- RStudio Server (puerto 8787, usuario `rstudio`, password `rstudio`)
 - Quarto (última versión)
 - CmdStanR + Stan
 - Docker CLI, Git, herramientas de desarrollo
@@ -29,17 +28,6 @@ Entorno de desarrollo basado en Docker para proyectos de ciencia de datos, machi
 
 4. El contenedor se construirá y abrirá automáticamente.
 
-## 🔐 Acceso a RStudio Server
-
-- URL: http://localhost:8787
-- Usuario: `rstudio`
-- Contraseña: `rstudio`
-
-Puedes cambiar la contraseña ejecutando dentro del contenedor:
-
-```bash
-sudo passwd rstudio
-```
 
 ## 🔌 Extensiones recomendadas de VSCode
 
@@ -48,6 +36,14 @@ Edita `.devcontainer/devcontainer.json` y añade más extensiones en:
 ```json
 "customizations.vscode.extensions"
 ```
+
+Ejemplos:
+
++ `ms-python.python`
++ `ikuyadeu.r`
++ `quarto.quarto`
++ `ms-toolsai.jupyter`
++ `eamodio.gitlens`
 
 ## 📁 Estructura de carpetas
 

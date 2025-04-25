@@ -2,9 +2,7 @@
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV USERNAME=devuser \
-    RSTUDIO_USER=rstudio \
-    RSTUDIO_PASSWORD=rstudio \
+ENV USERNAME=devuser \  
     PATH=$PATH:/home/devuser/.local/bin
 
 # --- Dependencias base
@@ -45,25 +43,11 @@ RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')
     Rscript -e "remotes::install_github('stan-dev/cmdstanr')" && \
     Rscript -e "cmdstanr::install_cmdstan()"
 
-
-# --- Parte opcional: RStudio Server (comentada porque no funciona en Ubuntu 24.04)
-RUN wget https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-server-2024.09.2-399-amd64.deb && \
-    gdebi -n rstudio-server-2024.09.2-399-amd64.deb && \
-    rm rstudio-server-2024.09.2-399-amd64.deb
-RUN useradd -m $RSTUDIO_USER && echo "$RSTUDIO_USER:$RSTUDIO_PASSWORD" | chpasswd
-
-# --- Crear script entrypoint ejecutado como devuser pero que lanza rserver con sudo
-RUN echo '#!/bin/bash\n'\
-'echo "[ENTRYPOINT] Lanzando rserver como root desde devuser (con sudo)"\n'\
-'sudo /usr/lib/rstudio-server/bin/rserver --server-daemonize=0 &\n'\
-'exec "$@"' > /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
-
 # --- Usar devuser para que VSCode trabaje cómodamente
 USER $USERNAME
 
 # --- Configuración final
 WORKDIR /workspaces
-EXPOSE 8787
 EXPOSE 8888
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
