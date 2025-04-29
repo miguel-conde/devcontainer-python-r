@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y pipx && \
     pipx install poetry
 
 # --- uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN python3.12 -m pip install uv --break-system-packages
 
 # --- Crear usuario no-root (si no existe)
 RUN if ! id -u $USERNAME > /dev/null 2>&1; then \
