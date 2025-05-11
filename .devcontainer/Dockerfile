@@ -13,7 +13,18 @@ RUN apt-get update && apt-get install -y \
     zsh gnupg lsb-release ca-certificates apt-transport-https \
     docker.io python3.12 python3.12-venv python3.12-dev \
     python3-pip r-base gdebi-core \
+    git-flow \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# --- Instalar Node.js (vía NodeSource)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    npm install -g npm
+    
+# --- Instalar Docker Compose (última versión estable)
+RUN curl -L "https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose && \
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 # --- pipx + pipenv + poetry
 RUN apt-get update && apt-get install -y pipx && \
@@ -46,6 +57,10 @@ RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')
     Rscript -e "remotes::install_github('stan-dev/cmdstanr')" && \
     Rscript -e "cmdstanr::install_cmdstan()"
 
+COPY entrypoint.sh /home/${USERNAME}/entrypoint.sh
+RUN chmod +x /home/${USERNAME}/entrypoint.sh
+ENTRYPOINT ["/home/${USERNAME}/entrypoint.sh"]
+
 # --- Usar devuser para que VSCode trabaje cómodamente
 USER $USERNAME
 
@@ -53,10 +68,6 @@ USER $USERNAME
 WORKDIR /workspaces
 EXPOSE 8888
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash"]
 
 
